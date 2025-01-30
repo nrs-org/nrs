@@ -241,6 +241,39 @@ This impact takes in two parameters, the personal and community factor, which
 are both in the 0-1 range. They are then mapped to the 0-0.5 and 0-0.2 range
 respectively, and the base score is calculated by taking the sum of the mapped values.
 
+### 2.10. Writing quality impact
+
+This impact aims to reward well-written storywriting in certain entries. This
+aims to promote high-quality media in the top rankings. This might have some
+overlaps with the plot impacts (EPI or NEI/AEI with emotion AP), so the rating
+criteria will purposely avoid factoring plot quality.
+
+The writing quality is judged based on several factors:
+- Character complexity: The depth of characters (backstory, personality,
+  actions, motivations, etc.) in the story.
+- Story quality (or story complexity and chemistry): The number of plot points
+  in the story and how well everything blended together.
+- Pacing: How fast events in the story played out, as well as the order of
+  events happening in the story.
+- Originality: How original the storyline is. For example, a generic isekai will
+  basically get 0 in this regards, but genre deconstructions like `Puella Magi
+  Madoka Magica` or `BanG Dream! It's MyGO!!!!!` will have a high score here.
+
+The factors are rated into subscores, denoted as $CC$ (character complexity),
+$SQ$ (story complexity and chemistry), $P$ (pacing) and $O$ (originality).
+These subscores can range in the 0-1 range.
+
+Originality of a storyline can be influenced by the character complexity and
+story quality factors, i.e. a generic isekai that focuses on character
+development will have a much higher originality score than a generic
+power-fantasy isekai.
+
+The formula for the base score (AL factor exclusively) is
+$$
+    AL = M \cdot \frac{CC + SQ}{2} \cdot \frac{1 + P}{2} \cdot \frac{1 + O}{2},
+$$
+where $M$ is the base value, currently set to $4.0$.
+
 ## 3. Relations
 
 ### 3.1. Remix (R)
