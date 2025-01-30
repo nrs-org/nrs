@@ -249,13 +249,14 @@ overlaps with the plot impacts (EPI or NEI/AEI with emotion AP), so the rating
 criteria will purposely avoid factoring plot quality.
 
 The writing quality is judged based on several factors:
-- Character complexity: The depth of characters (backstory, personality,
+
+* Character complexity: The depth of characters (backstory, personality,
   actions, motivations, etc.) in the story.
-- Story quality (or story complexity and chemistry): The number of plot points
+* Story quality (or story complexity and chemistry): The number of plot points
   in the story and how well everything blended together.
-- Pacing: How fast events in the story played out, as well as the order of
+* Pacing: How fast events in the story played out, as well as the order of
   events happening in the story.
-- Originality: How original the storyline is. For example, a generic isekai will
+* Originality: How original the storyline is. For example, a generic isekai will
   basically get 0 in this regards, but genre deconstructions like `Puella Magi
   Madoka Magica` or `BanG Dream! It's MyGO!!!!!` will have a high score here.
 
