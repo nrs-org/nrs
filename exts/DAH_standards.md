@@ -308,6 +308,14 @@ Assuming the order of all factor scores to be `AP,AU,CP,CU,MP,MU,AV,AL,AM,B,A`,
 the `Killed-by` matrix is a diagonal matrix with diagonal vector being
 `[0.2, 0.1, 0.05, 0.05, 0.2, 0.1, 0.0, 0.1, 0.1, 0.1, 0.0]`.
 
+### 3.4. Contains
+
+When an entry is a part of another entry, the parent entry will be a given a
+`Contains` relation that references the contained entry with the `Contains` matrix.
+
+This relation subsumes the NRS 2.0 contains "pseudo-relation". The `Contains` matrix
+is simply the identity matrix.
+
 ### 4. Music contribution rules
 
 A piece of music is divided into three parts: **vocal**, **instrumental**,
