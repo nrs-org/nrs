@@ -44,20 +44,20 @@ reposistory URL being
 This Git reposistory may be referred as "the official NRS reposistory".
 
 An NRS system is an entity that is capable of executing certain tasks described
-by an NRS specification. This is the specification for a *core* NRS system,
-therefore any *core* NRS system must be an NRS system. By modifying this
+by an NRS specification. This is the specification for a _core_ NRS system,
+therefore any _core_ NRS system must be an NRS system. By modifying this
 document using a set of [extensions](#22-extensions), which each has its own
 specification in the `exts` directory of the NRS specification git repository,
 a modified NRS specification can be derived from this document, then used to
 create a new NRS system. If the modification change how the system behave,
-this new system is no longer a *core* NRS system.
+this new system is no longer a _core_ NRS system.
 
 An NRS context can be created from an NRS system, which may or may not exist
 physically. NRS contexts act as an environment for the tasks to be executed.
 Different contexts from the same system may have different extensions enabled,
-therefore their processes may be incompatible. A *core* NRS context is created
-from a *core* NRS system, and since there are no restrictions on extension
-support for *core* system, *core* contexts also may not be incompatible with
+therefore their processes may be incompatible. A _core_ NRS context is created
+from a _core_ NRS system, and since there are no restrictions on extension
+support for _core_ system, _core_ contexts also may not be incompatible with
 each other. After the creation of an NRS context, the set of enabled extensions
 can not be modified.
 
