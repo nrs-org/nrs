@@ -7,7 +7,7 @@ Vendor: DAH
 Dependencies
 
 ```
-NRS 2.0+
+NRS 2.0-<3.0
 ```
 
 ## Overview

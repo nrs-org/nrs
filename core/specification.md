@@ -1,6 +1,6 @@
 # NRS (New Rating System) Specification
 
-Version 2.0
+Version 3.0
 
 ## 1. Overview
 
@@ -19,6 +19,19 @@ implementations. The most notable result is that it remove the need of any
 "Japanese word" from this specification (except for the Overview and History
 part, and some examples).
 
+NRS 3.0 introduces a breaking change by forcing the usage of the
+previously-named _pow_ combine function. It can be proven mathematically that
+the only continuous **associative** combine functions are the signed extension
+of the following forms of unsigned combine function:
+$$ c(x_1, x_2, \ldots, x_n) = \left(\sum_{k=1}^n x_k^p\right)^{1/p}, $$
+or
+$$ c(x_1, x_2, \ldots, x_n) = \max_{1 \le k \le n} x_k, $$
+with the latter being an approximate of the former as $p \to \infty$.
+NRS 3.0 only allows the first form of combine function, with $p = \frac1w$ being
+the inverse of the combine weight.
+Exploiting the nature of this choice, NRS 3.0 removed the concept of the combine
+function entirely, and replaced it with the concept of _score embedding_.
+
 ## 2. Fundamental concepts
 
 ### 2.1. NRS systems and NRS contexts
@@ -27,24 +40,24 @@ This set of files, containing the core specification and extensions specificatio
 documents are hosted on a [Git](https://git-scm.com/) reposistory. The current
 official reposistory is hosted on [GitHub](https://github.com), with the
 reposistory URL being
-[https://github.com/ngoduyanh/nrs.git](https://github.com/ngoduyanh/nrs.git).
+[https://github.com/nrs-org/nrs.git](https://github.com/nrs-org/nrs.git).
 This Git reposistory may be referred as "the official NRS reposistory".
 
 An NRS system is an entity that is capable of executing certain tasks described
-by an NRS specification. This is the specification for a *core* NRS system,
-therefore any *core* NRS system must be an NRS system. By modifying this
+by an NRS specification. This is the specification for a _core_ NRS system,
+therefore any _core_ NRS system must be an NRS system. By modifying this
 document using a set of [extensions](#22-extensions), which each has its own
 specification in the `exts` directory of the NRS specification git repository,
 a modified NRS specification can be derived from this document, then used to
 create a new NRS system. If the modification change how the system behave,
-this new system is no longer a *core* NRS system.
+this new system is no longer a _core_ NRS system.
 
 An NRS context can be created from an NRS system, which may or may not exist
 physically. NRS contexts act as an environment for the tasks to be executed.
 Different contexts from the same system may have different extensions enabled,
-therefore their processes may be incompatible. A *core* NRS context is created
-from a *core* NRS system, and since there are no restrictions on extension
-support for *core* system, *core* contexts also may not be incompatible with
+therefore their processes may be incompatible. A _core_ NRS context is created
+from a _core_ NRS system, and since there are no restrictions on extension
+support for _core_ system, _core_ contexts also may not be incompatible with
 each other. After the creation of an NRS context, the set of enabled extensions
 can not be modified.
 
@@ -90,45 +103,44 @@ multiplication, etc. All of the vectors and matrices used in the process will
 be simple vectors and matrices (ordered tuples of real numbers).
 
 Score vectors and matrices are simple vectors and matrices with a restriction:
-in a context, all score vectors must have the same number of dimensions `n`,
-and all score matrices must be `n x n` square matrices. This number `n` is
-called the number of factor scores.
+in a context, all score vectors must have the same number of dimensions $n$,
+and all score matrices must be $n \times n$ non-negative square matrices.
+This number $n$ is called the number of factor scores.
 
 Factor scores are fancy indices to access elements of a score vector. The number
 of factor scores are globally constant in a context, and every factor score can
 be used to access elements of any score vectors.
 
-An unique function, called **the combine function** must be defined in every
-context. This function takes in a multiset of number and an additional number,
-called the combine weight, as input, then gives out a single number as output.
-Alternatively, passing a simple vector or a score vector to this function in
-the place of the number multiset will result in the same output as collecting
-all elements of the vector into a new number multiset, then passing it to
-the function. In any case, the combine weight is obligatory.
+Every factor score has a **factor score weight**, which is a real number in $(0,
+\infty)$. The factor score weight is used to determine how much the factor
+score combines. For example,
 
-From this line, the result of calling the function using the number multiset
-(or vector) `a` and the combine weight `w` will be shortened into
-`combine(a, w)` using the function call notation.
+* A factor score weight of 1 means that combining factor scores is simply taking
+  the sum.
+* A factor score weight of 0 means that combining factor scores is simply taking
+  the maximum of all factor scores, which means only the largest factor score
+  matters. Note that a factor score weight of $0$ is not allowed, but one can
+  approximate it by using a very small positive number.
+* Factor score weights in between 0 and 1 means that combining factor scores
+  gives a total score that is between the maximum and the sum of all factor
+  scores, giving a balance between the two extremes.
+* Factor score weights greater than 1 means that combining factor scores
+  can give a total score that is greater than the sum of all factor scores, which
+  might be unsuitable in most cases.
 
-The combine function has several requirements:
+**Embedding** is defined as the process of transforming a non-negative score vector
+$v$ to the score vector $v'$, defined as:
+$$ v'_i = v_i^{1/w_i}, $$
+where $w_i$ denotes the factor score weight of factor score $i$.
 
-* `combine(a, 1)` is the sum of all elements in `a`
-* `combine(a, 0)` is the sum of the largest positive value in `a` (or 0 if it
-doesn't exist) with the smallest negative value in `a` (or 0 if it doesn't
-exist). In other words, `combine(a, 0) = max(max(a), 0) + min(min(a), 0)`
-* `combine(a, w)` is the sum of `combine(p, w)` and `combine(n, w)`, where `p`
-and `n` are filtered submultiset of `a` with only *positive* and *negative*
-values, respectively.
-* `combine(a, w)` is the quotient of `combine(sa, w)` to `s`, where `sa` is the
-multiset of all element of `a`, scaled by `s`, for every non-zero value of `s`.
+**Unembedding** is the reverse process of embedding, defined as:
+$$ v_i = v_i^{\prime w_i}. $$
 
-Using the mentioned property, we can achieve
-`combine(a, w) = combine(p, w) - combine(-n, w)`
-(using the same notation as the third requirement, `-n` is the multiset of all
-absolute values of `n`. The right hand side only computes combine with a multiset
-of real positive numbers, therefore it's sufficient for implementation to define
-`combine` with the assumption that all elements of `a` is positive. This
-specialization of `combine` is called the `combineUnsigned` function.
+NRS score calculation goes as follows: first, all user-facing scores (impact
+scores) are embedded into the linear scoring phase, where embedded score vectors
+are added together to get a overall linear score vector for each entry.
+The overall linear score vector is then unembedded to get the overall score vector
+of each entry.
 
 ### 2.4. Context entities
 
@@ -140,13 +152,8 @@ entries, impacts, and relations.
 An **entry** is a context entity that is scored in the
 [score calculation process](#32-score-calculation)
 
-An entry can contains other entries. For each pair of entry `A` and `B`, there
-is a number named the **direct contain weight**, that determine how much of `B`
-was contained directly by `A`. This number must be in the 0 to 1 range.
-
-These values are used to determine the **contain weight** of entry pairs. The
-process is covered in the
-[contain weight solving](#322-contain-weight-solving) process.
+Prior to NRS 3.0, an entry can contain other entries, however, this relationship
+is subsumed by the relation entities.
 
 #### 2.4.2. Impacts
 
@@ -154,9 +161,9 @@ An **impact** is a context entity that's used to give constant score to entries.
 
 An impact is defined using two properties:
 
-* The impact contribution map, mapping entries to a number, called the
-**direct contributing weight**. This number determines how much of the impact
-was a result of the entry. This number must be in the 0 to 1 range.
+* The impact contribution map, mapping entries to a score matrix, called the
+**contributing weight**. This number determines how much of the impact
+was a result of the entry.
 * The impact score vector, which will be scaled to get the score added
 each contributing entry.
 
@@ -171,9 +178,9 @@ A relation is defined using two properties:
 * The relation referencing map, mapping entries to a score matrix, called the
 **relation score transform matrix**.
 
-* The relation contribution map, mapping entries to a number, called the
-**direct contributing weight**. Similarly to the weight in impacts, it
-determines how much of the relation affects the entry. It must be in the 0 to 1 range.
+* The relation contribution map, mapping entries to a score matrix, called the
+**contributing weight**. Similarly to the weight in impacts, it
+determines how much of the relation affects the entry.
 
 ## 3. Required capabilities
 
@@ -190,89 +197,67 @@ lifetime is implementation-defined.
 
 ### 3.2. Score calculation
 
-An NRS context doesn't exactly need to follow along these steps. The only
-requirements for the calculation process is that the result must match
-(numeric errors are allowed).
+The score calculation process is the process of assigning a score vector to each
+entry $e$, denoted as $S(e)$. Denote the set of all entries, impacts and
+relations as $E$, $I$ and $R$, respectively, the contributing weight of an entry
+$e$ in an impact/relation $ir$ as $W(e, ir)$, the relation score transform
+matrix of an entry $e$ in the relation $r$ is $T(e, r)$ and the impact score of
+an impact $i$ as $s(i)$.
 
-#### 3.2.1. Combining score vectors
+#### 3.2.1. Embedding impact scores
 
-The function `combineVectors` takes in a multiset of vectors and a combine
-weight, in the form of a vector, then performs component-wise `combine`-ing
-to get the output vector.
+All impact scores are embedded via the method described in
+[2.3](#23-mathematical-concepts). However, since impact scores might be
+mixed-sign, the scores are embedded into two parts: the positive part
+and the negative part:
+$$
+\begin{align*}
+s_+ (i) &= \operatorname{embed}(\max\{0, s(i)\})\\
+s_- (i) &= \operatorname{embed}(\min\{0, s(i)\})
+\end{align*}
+$$
 
-The combine weight is globally constant, and it's called the
-**factor score combine weight vector**. It will be defined by the implementation.
+#### 3.2.2. Calculating constant scores
 
-#### 3.2.2. Contain weight solving
+Then, the impact (constant) scores of each entries can be calculated as follows:
+$$
+\begin{align*}
+S^c_+(e) &= \sum_{i \in I} W(e, i) \max\{s(i), 0\},\\
+S^c_-(e) &= \sum_{i \in I} W(e, i) \max\{-s(i), 0\}.
+\end{align*}
+$$
 
-Entries in the context and their relationship can be modeled as a weighted
-directed graph. This graph, called the **entry graph**, is constructed as follows:
+#### 3.2.3. Solving relational scores
 
-* The vertex set is the set of all entries.
-* Let `A` and `B` be vertices (entries of the context). The directed edge
-`(A, B)` is an edge of the entry graph if and only if the
-**direct contain weight** of the pair `(A, B)` is greater than zero. This weight
-is also used as the weight for this edge.
+In this step, the relation scores (and therefore the overall scores) of each
+entry are calculated. The total score of an entry $e$ is defined as the sum of
+the impact and relation scores:
+$$
+\begin{align*}
+S_+(e) &= S^c_+(e) + S^r_+(e),\\
+S_-(e) &= S^c_-(e) + S^r_-(e),
+\end{align*}
+$$
+where $S^r_+(e), S^r_-(e)$ is the two signed relation scores of entry $e$, which
+should satisfy the following relation
+$$
+\begin{align*}
+S^r_+(e) &= \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S_+(e'),\\
+S^r_-(e) &= \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S_-(e').
+\end{align*}
+$$
 
-After establishing the entry graph, the **contain weight** of the pair `(A, B)`
-can be calculated as follows:
+Combining the two sets of equations gives,
+$$
+\begin{align*}
+S_+(e) &= S^c_+(e) + \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S_+(e'),\\
+S_-(e) &= S^c_-(e) + \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S_-(e'),
+\end{align*}
+$$
+which is simply a system of linear equations that can be solved analytically.
 
-* If `A` and `B` is the same entry, the result is 1.
-* Otherwise, the result is sum of the contain wights of the pairs in the form
-`(C, B)`, for every out-neighbor `C` of `A`.
+#### 3.2.4. Unembedding overall scores
 
-As long as there are no loops in the entry graph, the process will ultimately
-come to an end. The behavior of this process when there are loops is
-implementation-specific. The recommended behavior is too forbid the existence
-of loops in this graph.
-
-#### 3.2.3. Contributing weight solving
-
-Consider the entity `IR` that is either an impact or a relation. Since both
-impacts and relations have a contribution map, we will let that map for `IR`
-be `M`.
-
-Using this map and the containing relationship between entries, the contribution
-weight of an entry `E` to `IR` may be calculated by taking the sum of all
-products between the contain weight of the pair `(E, A)` and the
-**direct contributing weight** of `A` in `IR` for every `A` in the map `M`.
-
-This weight is then passed into an function, called the weight-buffing function
-to get the buffed contributing weight of `E` in `IR`. The buffed weight could be
-any values, like a scalar, a vector or a matrix, and is implementation-defined.
-The only requirement for this value is the ability to be multiplied with a
-score vector, and this multiplication process should be similar to
-matrix-vector multiplication.
-
-#### 3.2.4. Impact score calculation
-
-For an impact `I` and entry `E`, the amount of score that `I` give to `E` is the
-product of the I's buffed contributing weight of `E` in `I` and the impact score
-vector.
-
-The total impact score of an entry `E` is then calculated by performing
-`combineVectors` on the multiset of all score vectors that `I` gives to `E`,
-for every impact `I`.
-
-#### 3.2.5. Relation score calculation
-
-For a relation `R`, the relation base score is calculated by taking the sum of
-all matrix products between every referenced entry overall score and its overall
-score.
-
-Using this base score, for every relation `R` and entry `E`, the score vector
-that `R` give to `E` is calculated by taking the product of the buffed
-contributing weight of `E` in `R` and `R`'s base score.
-
-The total relation score of an entry `E` is then calculated by performing
-`combineVectors` on the multiset of all score vectors that `R` gives to `E`,
-for every relation `R`.
-
-> Note: This algorithm may cause infinite recursion (relation score of this
-entry may depend on the overall score of another entries). If this happens, the
-behavior is implementation-defined.
-
-#### 3.2.5. Overall score calculation
-
-The overall score is simply the sum of the impact score and the relation score
-of an entry.
+The overall scores of each entry $e$ is then calculated by unembedding the
+embedded scores:
+$$ S(e) = \operatorname{unembed}(S_+(e) - S_-(e)) $$
