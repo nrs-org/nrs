@@ -34,7 +34,10 @@ The `DAH_animanga_info` object is a dictionary where keys are source identifiers
 
 - `lastUpdated`: string (ISO 8601) — The timestamp when the information was last updated from the source.
 - `title`: string — Main title (override)
-- `type`: string — Enum: TV, MOVIE, OVA, ONA, SPECIAL, UNKNOWN, Manga, LightNovel (override)
+- `type`: string — Enum: UNKNOWN or
+  - Anime: TV, MOVIE, OVA, ONA, SPECIAL
+  - Manga: MANGA, ONE_SHOT, DOUJINSHI, MANHWA, MANHUA, OEL
+  - Novel: LIGHT_NOVEL, WEB_NOVEL
 - `status`: string — Enum: FINISHED, ONGOING, UPCOMING, UNKNOWN (override)
 - `picture`: string — Main image URL (override)
 - `thumbnail`: string — Thumbnail image URL (override)
