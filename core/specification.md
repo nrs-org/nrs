@@ -140,7 +140,7 @@ score combines. For example,
 $v$ to the score vector $v'$, defined as:
 
 ```math
-v'_i = \operatorname{sign} (v_i) \left| v_i \right|^{1/w_i},
+v'_i = \mathrm{sign} (v_i) \left| v_i \right|^{1/w_i},
 ```
 
 where $w_i$ denotes the factor score weight of factor score $i$.
@@ -148,7 +148,7 @@ where $w_i$ denotes the factor score weight of factor score $i$.
 **Unembedding** is the reverse process of embedding, defined as:
 
 ```math
-v_i = \operatorname{sign} (v'_i) \left| v'_i \right|^{w_i}.
+v_i = \mathrm{sign} (v'_i) \left| v'_i \right|^{w_i}.
 ```
 
 NRS score calculation goes as follows: first, all user-facing scores (impact
@@ -225,7 +225,7 @@ All impact scores are embedded via the method described in
 [2.3](#23-mathematical-concepts).
 
 ```math
-s' (i) = \operatorname{embed}(s(i))
+s' (i) = \mathrm{embed}(s(i))
 ```
 
 #### 3.2.2. Calculating constant scores
@@ -267,5 +267,5 @@ The overall scores of each entry $e$ is then calculated by unembedding the
 embedded scores:
 
 ```math
-S(e) = \operatorname{unembed}(S'(e))
+S(e) = \mathrm{unembed}(S'(e))
 ```

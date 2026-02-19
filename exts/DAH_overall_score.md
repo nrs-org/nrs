@@ -28,15 +28,15 @@ where each subscore $s \in \mathcal{S}$ is a set of factor scores and has
 combine weight $w_s$, then:
 
 ```math
-\operatorname{scalarize}(v) = \sum_{s \in \mathcal{S}}
+\mathrm{scalarize}(v) = \sum_{s \in \mathcal{S}}
 \left(\sum_{f \in s} v_f^{1/w_s}\right)^{w_s}.
 ```
 
 Then, the overall scalar score is simply defined as:
 
 ```math
-s(e) = \operatorname{scalarize}(S^*_+(e))
-- \operatorname{scalarize}(S^*_-(e))
+s(e) = \mathrm{scalarize}(S^*_+(e))
+- \mathrm{scalarize}(S^*_-(e))
 ```
 
 ## See Also
