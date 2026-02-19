@@ -130,11 +130,11 @@ score combines. For example,
 
 **Embedding** is defined as the process of transforming a non-negative score vector
 $v$ to the score vector $v'$, defined as:
-$$ v'_i = v_i^{1/w_i}, $$
+$$ v'_i = \operatorname{sign} (v_i) \left| v_i \right|^{1/w_i}, $$
 where $w_i$ denotes the factor score weight of factor score $i$.
 
 **Unembedding** is the reverse process of embedding, defined as:
-$$ v_i = v_i^{\prime w_i}. $$
+$$ v_i = \operatorname{sign} (v'_i) \left| v'_i \right|^{w_i}. $$
 
 NRS score calculation goes as follows: first, all user-facing scores (impact
 scores) are embedded into the linear scoring phase, where embedded score vectors
@@ -207,24 +207,16 @@ an impact $i$ as $s(i)$.
 #### 3.2.1. Embedding impact scores
 
 All impact scores are embedded via the method described in
-[2.3](#23-mathematical-concepts). However, since impact scores might be
-mixed-sign, the scores are embedded into two parts: the positive part
-and the negative part:
+[2.3](#23-mathematical-concepts).
 $$
-\begin{align*}
-s_+ (i) &= \operatorname{embed}(\max\{0, s(i)\})\\
-s_- (i) &= \operatorname{embed}(\min\{0, s(i)\})
-\end{align*}
+s' (i) = \operatorname{embed}(s(i))
 $$
 
 #### 3.2.2. Calculating constant scores
 
 Then, the impact (constant) scores of each entries can be calculated as follows:
 $$
-\begin{align*}
-S^c_+(e) &= \sum_{i \in I} W(e, i) \max\{s(i), 0\},\\
-S^c_-(e) &= \sum_{i \in I} W(e, i) \max\{-s(i), 0\}.
-\end{align*}
+S'_c(e) = \sum_{i \in I} W(e, i) s(i),.
 $$
 
 #### 3.2.3. Solving relational scores
@@ -233,26 +225,17 @@ In this step, the relation scores (and therefore the overall scores) of each
 entry are calculated. The total score of an entry $e$ is defined as the sum of
 the impact and relation scores:
 $$
-\begin{align*}
-S_+(e) &= S^c_+(e) + S^r_+(e),\\
-S_-(e) &= S^c_-(e) + S^r_-(e),
-\end{align*}
+S'(e) = S'_c(e) + S'_r(e),
 $$
-where $S^r_+(e), S^r_-(e)$ is the two signed relation scores of entry $e$, which
+where $S'_r(e)$ is the relation score of entry $e$, which
 should satisfy the following relation
 $$
-\begin{align*}
-S^r_+(e) &= \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S_+(e'),\\
-S^r_-(e) &= \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S_-(e').
-\end{align*}
+S'_r(e) = \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S'(e').
 $$
 
 Combining the two sets of equations gives,
 $$
-\begin{align*}
-S_+(e) &= S^c_+(e) + \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S_+(e'),\\
-S_-(e) &= S^c_-(e) + \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S_-(e'),
-\end{align*}
+S'(e) = S'_c(e) + \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S'(e').
 $$
 which is simply a system of linear equations that can be solved analytically.
 
@@ -260,4 +243,4 @@ which is simply a system of linear equations that can be solved analytically.
 
 The overall scores of each entry $e$ is then calculated by unembedding the
 embedded scores:
-$$ S(e) = \operatorname{unembed}(S_+(e) - S_-(e)) $$
+$$ S(e) = \operatorname{unembed}(S'(e)) $$
