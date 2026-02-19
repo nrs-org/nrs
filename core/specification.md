@@ -233,7 +233,7 @@ s' (i) = \operatorname{embed}(s(i))
 Then, the impact (constant) scores of each entries can be calculated as follows:
 
 ```math
-S'_c(e) = \sum_{i \in I} W(e, i) s(i),.
+S'_c(e) = \sum_{i \in I} W(e, i) s(i).
 ```
 
 #### 3.2.3. Solving relational scores
