@@ -23,9 +23,17 @@ NRS 3.0 introduces a breaking change by forcing the usage of the
 previously-named _pow_ combine function. It can be proven mathematically that
 the only continuous **associative** combine functions are the signed extension
 of the following forms of unsigned combine function:
-$$ c(x_1, x_2, \ldots, x_n) = \left(\sum_{k=1}^n x_k^p\right)^{1/p}, $$
+
+```math
+c(x_1, x_2, \ldots, x_n) = \left(\sum_{k=1}^n x_k^p\right)^{1/p},
+```
+
 or
-$$ c(x_1, x_2, \ldots, x_n) = \max_{1 \le k \le n} x_k, $$
+
+```math
+c(x_1, x_2, \ldots, x_n) = \max_{1 \le k \le n} x_k,
+```
+
 with the latter being an approximate of the former as $p \to \infty$.
 NRS 3.0 only allows the first form of combine function, with $p = \frac1w$ being
 the inverse of the combine weight.
@@ -130,11 +138,18 @@ score combines. For example,
 
 **Embedding** is defined as the process of transforming a non-negative score vector
 $v$ to the score vector $v'$, defined as:
-$$ v'_i = \operatorname{sign} (v_i) \left| v_i \right|^{1/w_i}, $$
+
+```math
+v'_i = \mathrm{sign} (v_i) \left| v_i \right|^{1/w_i},
+```
+
 where $w_i$ denotes the factor score weight of factor score $i$.
 
 **Unembedding** is the reverse process of embedding, defined as:
-$$ v_i = \operatorname{sign} (v'_i) \left| v'_i \right|^{w_i}. $$
+
+```math
+v_i = \mathrm{sign} (v'_i) \left| v'_i \right|^{w_i}.
+```
 
 NRS score calculation goes as follows: first, all user-facing scores (impact
 scores) are embedded into the linear scoring phase, where embedded score vectors
@@ -208,39 +223,49 @@ an impact $i$ as $s(i)$.
 
 All impact scores are embedded via the method described in
 [2.3](#23-mathematical-concepts).
-$$
-s' (i) = \operatorname{embed}(s(i))
-$$
+
+```math
+s' (i) = \mathrm{embed}(s(i))
+```
 
 #### 3.2.2. Calculating constant scores
 
 Then, the impact (constant) scores of each entries can be calculated as follows:
-$$
-S'_c(e) = \sum_{i \in I} W(e, i) s(i),.
-$$
+
+```math
+S'_c(e) = \sum_{i \in I} W(e, i) s(i).
+```
 
 #### 3.2.3. Solving relational scores
 
 In this step, the relation scores (and therefore the overall scores) of each
 entry are calculated. The total score of an entry $e$ is defined as the sum of
 the impact and relation scores:
-$$
+
+```math
 S'(e) = S'_c(e) + S'_r(e),
-$$
+```
+
 where $S'_r(e)$ is the relation score of entry $e$, which
 should satisfy the following relation
-$$
+
+```math
 S'_r(e) = \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S'(e').
-$$
+```
 
 Combining the two sets of equations gives,
-$$
+
+```math
 S'(e) = S'_c(e) + \sum_{r \in R} W(e, r) \sum_{e' \in E} T(e', r) S'(e').
-$$
+```
+
 which is simply a system of linear equations that can be solved analytically.
 
 #### 3.2.4. Unembedding overall scores
 
 The overall scores of each entry $e$ is then calculated by unembedding the
 embedded scores:
-$$ S(e) = \operatorname{unembed}(S'(e)) $$
+
+```math
+S(e) = \mathrm{unembed}(S'(e))
+```

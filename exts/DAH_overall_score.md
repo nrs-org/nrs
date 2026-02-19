@@ -26,16 +26,18 @@ Separately unembed these two vectors to have two unembedded score vectors
 $S^\ast_+(e)$ and $S^\ast_-(e)$. Let $\mathcal{S}$ be the set of all subscores,
 where each subscore $s \in \mathcal{S}$ is a set of factor scores and has
 combine weight $w_s$, then:
-$$
-\operatorname{scalarize}(v) = \sum_{s \in \mathcal{S}}
+
+```math
+\mathrm{scalarize}(v) = \sum_{s \in \mathcal{S}}
 \left(\sum_{f \in s} v_f^{1/w_s}\right)^{w_s}.
-$$
+```
 
 Then, the overall scalar score is simply defined as:
-$$
-    s(e) = \operatorname{scalarize}(S^*_+(e))
-    - \operatorname{scalarize}(S^*_-(e))
-$$
+
+```math
+s(e) = \mathrm{scalarize}(S^*_+(e))
+- \mathrm{scalarize}(S^*_-(e))
+```
 
 ## See Also
 

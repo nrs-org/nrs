@@ -270,9 +270,11 @@ development will have a much higher originality score than a generic
 power-fantasy isekai.
 
 The formula for the base score (AL factor exclusively) is
-$$
-    AL = M \cdot \frac{CC + SQ}{2} \cdot \frac{1 + P}{2} \cdot \frac{1 + O}{2},
-$$
+
+```math
+AL = M \cdot \frac{CC + SQ}{2} \cdot \frac{1 + P}{2} \cdot \frac{1 + O}{2},
+```
+
 where $M$ is the base value, currently set to $4.0$.
 
 ## 3. Relations
