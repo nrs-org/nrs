@@ -1,6 +1,6 @@
 # NRS (New Rating System) Specification
 
-Version 3.0
+Version 3.1
 
 ## 1. Overview
 
